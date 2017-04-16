@@ -2,10 +2,15 @@ package ru.izebit.common;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.hazelcast.map.EntryProcessor;
+import com.hazelcast.query.Predicate;
+import com.hazelcast.query.Predicates;
+import com.hazelcast.query.SqlPredicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
+import java.util.Collection;
 
 /**
  * @author Artem Konovalov
@@ -41,5 +46,23 @@ public class PersonDao {
 
     public void removeAll() {
         this.personalMap.clear();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T processWithName(String name, EntryProcessor<String, Person> processor) {
+        return (T) personalMap.executeOnKey(name, processor);
+    }
+
+    public Collection<Person> findByName(String name) {
+        SqlPredicate predicate = new SqlPredicate(String.format("name = %s", name));
+        return personalMap.values(predicate);
+    }
+
+
+    public Collection<Person> findBySurnameAndAgeLessThen(String surname, int age) {
+        Predicate predicate = Predicates.equal("surname", surname);
+        predicate = Predicates.and(predicate, Predicates.lessThan("age", age));
+
+        return personalMap.values(predicate);
     }
 }

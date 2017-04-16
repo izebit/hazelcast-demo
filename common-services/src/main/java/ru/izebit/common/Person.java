@@ -1,5 +1,6 @@
 package ru.izebit.common;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -10,11 +11,12 @@ import java.io.Serializable;
  * @since 1.0
  */
 @Data
+@AllArgsConstructor
 public class Person implements Serializable {
-    private static final long serialVersionUID = 2328938298392839882L;
+    private static final long serialVersionUID = 232898298392839881L;
 
 
     private final String name;
-    private final String surname;
-    private final int age;
+    private String surname;
+    private int age;
 }
