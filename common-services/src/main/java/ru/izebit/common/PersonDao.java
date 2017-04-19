@@ -19,7 +19,7 @@ import java.util.Collection;
  */
 @Component
 public class PersonDao {
-    private static final String MAP_NAME = "personal";
+    public static final String MAP_NAME = "personal-map";
 
     private final HazelcastInstance instance;
     private final IMap<String, Person> personalMap;
@@ -28,8 +28,6 @@ public class PersonDao {
     public PersonDao(HazelcastInstance instance) {
         this.instance = instance;
         this.personalMap = instance.getMap(MAP_NAME);
-
-        this.personalMap.addIndex("age", true);
     }
 
 

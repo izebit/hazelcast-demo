@@ -1,5 +1,6 @@
 package ru.izebit.server;
 
+import com.hazelcast.config.Config;
 import com.hazelcast.core.HazelcastInstance;
 import org.springframework.context.annotation.Scope;
 
@@ -21,9 +22,12 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 @Scope(SCOPE_SINGLETON)
 public class HazelcastCluster {
     private final List<HazelcastInstance> instances;
+    private final Config config;
 
-    public HazelcastCluster(int nodeCount) {
+    public HazelcastCluster(int nodeCount, Config config) {
         this.instances = new CopyOnWriteArrayList<>();
+        this.config = config;
+
         ensureSize(nodeCount);
     }
 
@@ -34,7 +38,7 @@ public class HazelcastCluster {
         List<Future<?>> futures = new ArrayList<>();
         if (instances.size() < nodeCount)
             for (int i = instances.size(); i < nodeCount; i++) {
-                Future<?> future = commonPool().submit(() -> instances.add(newHazelcastInstance()));
+                Future<?> future = commonPool().submit(() -> instances.add(newHazelcastInstance(config)));
                 futures.add(future);
             }
         else
