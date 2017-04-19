@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * @author Artem Konovalov
@@ -22,5 +23,13 @@ public class ApplicationLauncher {
     @Bean(destroyMethod = "shutdown")
     public HazelcastInstance hazelcastInstance() {
         return Hazelcast.newHazelcastInstance();
+    }
+
+    @Bean
+    @Lazy(false)
+    public HazelcastCluster hazelcastCluster() {
+        int nodeCount = Integer.getInteger("hazelcast.node.count", 4);
+
+        return new HazelcastCluster(nodeCount);
     }
 }

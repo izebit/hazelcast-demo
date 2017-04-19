@@ -28,6 +28,8 @@ public class PersonDao {
     public PersonDao(HazelcastInstance instance) {
         this.instance = instance;
         this.personalMap = instance.getMap(MAP_NAME);
+
+        this.personalMap.addIndex("age", true);
     }
 
 
