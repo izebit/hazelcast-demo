@@ -1,7 +1,8 @@
-package ru.izebit.common;
+package ru.izebit.common.processors;
 
 import com.hazelcast.map.EntryBackupProcessor;
 import com.hazelcast.map.EntryProcessor;
+import ru.izebit.common.model.Person;
 
 import java.io.Serializable;
 import java.util.Map;

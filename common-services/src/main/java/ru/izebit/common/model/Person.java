@@ -1,4 +1,4 @@
-package ru.izebit.common;
+package ru.izebit.common.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

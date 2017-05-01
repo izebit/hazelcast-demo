@@ -3,15 +3,14 @@ package ru.izebit.server;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.config.MapIndexConfig;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import ru.izebit.common.PersonDao;
+
+import static ru.izebit.common.other.TableNames.PERSON_MAP_NAME;
 
 /**
  * @author Artem Konovalov
@@ -25,10 +24,6 @@ public class ApplicationLauncher {
         SpringApplication.run(ApplicationLauncher.class, args);
     }
 
-    @Bean(destroyMethod = "shutdown")
-    public HazelcastInstance hazelcastInstance() {
-        return Hazelcast.newHazelcastInstance();
-    }
 
     @Bean
     @Lazy(false)
@@ -43,10 +38,11 @@ public class ApplicationLauncher {
         Config config = new Config();
 
         MapConfig personMapConfig = new MapConfig();
-        personMapConfig.setName(PersonDao.MAP_NAME);
+        personMapConfig.setName(PERSON_MAP_NAME);
 
         MapIndexConfig ageIndexConfig = new MapIndexConfig("age", true);
         personMapConfig.addMapIndexConfig(ageIndexConfig);
+        config.addMapConfig(personMapConfig);
 
 
         return config;

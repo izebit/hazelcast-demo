@@ -1,4 +1,4 @@
-package ru.izebit.common;
+package ru.izebit.common.dao;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
@@ -8,8 +8,9 @@ import com.hazelcast.query.Predicates;
 import com.hazelcast.query.SqlPredicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ru.izebit.common.model.Person;
+import ru.izebit.common.other.TableNames;
 
-import javax.annotation.PreDestroy;
 import java.util.Collection;
 
 /**
@@ -19,21 +20,11 @@ import java.util.Collection;
  */
 @Component
 public class PersonDao {
-    public static final String MAP_NAME = "personal-map";
 
-    private final HazelcastInstance instance;
     private final IMap<String, Person> personalMap;
 
-    @Autowired
-    public PersonDao(HazelcastInstance instance) {
-        this.instance = instance;
-        this.personalMap = instance.getMap(MAP_NAME);
-    }
-
-
-    @PreDestroy
-    public void destroy() {
-        this.instance.shutdown();
+    public PersonDao(@Autowired HazelcastInstance instance) {
+        this.personalMap = instance.getMap(TableNames.PERSON_MAP_NAME);
     }
 
     public Person getByName(String name) {
@@ -50,6 +41,11 @@ public class PersonDao {
 
     @SuppressWarnings("unchecked")
     public <T> T processWithName(String name, EntryProcessor<String, Person> processor) {
+        return (T) personalMap.executeOnKey(name, processor);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T processing(String name, EntryProcessor<String, Person> processor) {
         return (T) personalMap.executeOnKey(name, processor);
     }
 

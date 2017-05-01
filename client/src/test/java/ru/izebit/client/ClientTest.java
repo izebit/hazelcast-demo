@@ -6,15 +6,20 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import ru.izebit.common.Person;
-import ru.izebit.common.PersonAgeEntryProcessor;
-import ru.izebit.common.PersonDao;
+import ru.izebit.common.dao.AddressDao;
+import ru.izebit.common.dao.PersonDao;
+import ru.izebit.common.model.Address;
+import ru.izebit.common.model.Overview;
+import ru.izebit.common.model.Person;
+import ru.izebit.common.processors.OverviewEntryProcessor;
+import ru.izebit.common.processors.PersonAgeEntryProcessor;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,6 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ClientTest {
     @Autowired
     private PersonDao personDao;
+    @Autowired
+    private AddressDao addressDao;
 
     @Before
     public void tearDown() {
@@ -47,7 +54,7 @@ public class ClientTest {
     }
 
     @Test
-    public void successful_entry_processing() throws InterruptedException {
+    public void successful_change_age_entry_processing() throws InterruptedException {
         Person person = new Person("artem", "konovalov", 26);
         personDao.put(person);
 
@@ -61,6 +68,29 @@ public class ClientTest {
 
         Person storedPerson = personDao.getByName(person.getName());
         assertEquals(age, storedPerson.getAge());
+    }
+
+
+    @Test
+    public void successful_overview_entry_processing() throws InterruptedException {
+        Person person = new Person("artem", "konovalov", 26);
+        personDao.put(person);
+
+
+        Address firstAddress = new Address("saratov", "fedorovskay");
+        addressDao.put(person.getName(), firstAddress);
+
+        Address secondAddress = new Address("saratov", "shelkovichnay");
+        addressDao.put(person.getName(), secondAddress);
+
+        OverviewEntryProcessor processor = new OverviewEntryProcessor();
+        Overview overview = personDao.processing(person.getName(), processor);
+
+        assertNotNull(overview);
+        assertEquals(person.getName(), overview.getPerson().getName());
+        assertThat(overview.getAddresses(), hasSize(2));
+        assertTrue(overview.getAddresses().contains(firstAddress));
+        assertTrue(overview.getAddresses().contains(secondAddress));
     }
 
     @Test
