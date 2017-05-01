@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static ru.izebit.common.other.TableNames.ADDRESS_MAP_NAME;
+import static ru.izebit.common.other.HazelcastEntityNames.ADDRESS_MAP_NAME;
 
 /**
  * @author Artem Konovalov

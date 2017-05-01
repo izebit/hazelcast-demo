@@ -8,8 +8,9 @@ import lombok.experimental.UtilityClass;
  * @since 1.0
  */
 @UtilityClass
-public class TableNames {
+public class HazelcastEntityNames {
 
     public static final String PERSON_MAP_NAME = "person-map";
     public static final String ADDRESS_MAP_NAME = "address-map";
+    public static final String MESSAGE_QUEUE = "message-queue";
 }

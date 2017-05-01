@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 
-import static ru.izebit.common.other.TableNames.PERSON_MAP_NAME;
+import static ru.izebit.common.other.HazelcastEntityNames.PERSON_MAP_NAME;
 
 /**
  * @author Artem Konovalov

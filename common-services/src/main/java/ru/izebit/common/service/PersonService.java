@@ -1,4 +1,4 @@
-package ru.izebit.common.dao;
+package ru.izebit.common.service;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
@@ -9,7 +9,7 @@ import com.hazelcast.query.SqlPredicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.izebit.common.model.Person;
-import ru.izebit.common.other.TableNames;
+import ru.izebit.common.other.HazelcastEntityNames;
 
 import java.util.Collection;
 
@@ -19,12 +19,12 @@ import java.util.Collection;
  * @since 1.0
  */
 @Component
-public class PersonDao {
+public class PersonService {
 
     private final IMap<String, Person> personalMap;
 
-    public PersonDao(@Autowired HazelcastInstance instance) {
-        this.personalMap = instance.getMap(TableNames.PERSON_MAP_NAME);
+    public PersonService(@Autowired HazelcastInstance instance) {
+        this.personalMap = instance.getMap(HazelcastEntityNames.PERSON_MAP_NAME);
     }
 
     public Person getByName(String name) {
@@ -36,7 +36,7 @@ public class PersonDao {
     }
 
     public void removeAll() {
-        this.personalMap.clear();
+        personalMap.clear();
     }
 
     @SuppressWarnings("unchecked")
