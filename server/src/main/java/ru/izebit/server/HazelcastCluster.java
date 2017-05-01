@@ -33,6 +33,7 @@ public class HazelcastCluster {
         ensureSize(nodeCount);
     }
 
+    //TODO there is something wrong with shutdown
     public synchronized void ensureSize(int nodeCount) {
         if (instances.size() == nodeCount)
             return;

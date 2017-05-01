@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Timed;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ru.izebit.common.model.Address;
@@ -16,10 +17,10 @@ import ru.izebit.common.service.AddressService;
 import ru.izebit.common.service.MessageService;
 import ru.izebit.common.service.PersonService;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.contains;
@@ -165,5 +166,45 @@ public class ClientTest {
 
         Person updatedPerson = personService.getByName(person.getName());
         assertEquals(result, updatedPerson.getAge());
+    }
+
+    @Test
+    @Timed(millis = 10_000L)
+    public void successful_topic() throws Exception {
+        int count = 1_000;
+        final AtomicInteger summaryCount = new AtomicInteger();
+        List<String> news = new ArrayList<>();
+        Set<String> messages = Collections.newSetFromMap(new ConcurrentHashMap<>());
+
+        messageService.addCallBackForNews(msg -> {
+            summaryCount.incrementAndGet();
+            messages.remove(msg);
+        });
+
+        IntStream
+                .range(0, count)
+                .mapToObj(number -> "msg:" + number)
+                .forEach(msg -> {
+                    messages.add(msg);
+                    news.add(msg);
+                });
+
+        for (int i = 0; i < count / 2; i++)
+            messageService.publish(news.get(i));
+
+        TimeUnit.SECONDS.sleep(1);
+
+        assertEquals(count / 2, messages.size());
+        assertEquals(count / 2, summaryCount.get());
+        messageService.addCallBackForNews(msg -> summaryCount.incrementAndGet());
+
+
+        for (int i = count / 2; i < news.size(); i++)
+            messageService.publish(news.get(i));
+
+        TimeUnit.SECONDS.sleep(1);
+
+        assertEquals(summaryCount.get(), count + count / 2);
+        assertTrue(messages.isEmpty());
     }
 }
