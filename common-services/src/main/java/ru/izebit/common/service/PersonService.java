@@ -61,4 +61,15 @@ public class PersonService {
 
         return personalMap.values(predicate);
     }
+
+    public void changeAge(String name, int delta) {
+        try {
+            personalMap.lock(name);
+            Person person = personalMap.get(name);
+            person.setAge(person.getAge() + delta);
+            personalMap.put(name, person);
+        } finally {
+            personalMap.unlock(name);
+        }
+    }
 }

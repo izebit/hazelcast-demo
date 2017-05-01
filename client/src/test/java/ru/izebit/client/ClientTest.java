@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
@@ -148,5 +149,21 @@ public class ClientTest {
         }
 
         assertNull(messageService.receive());
+    }
+
+    @Test
+    public void successful_lock_for_key() {
+        Person person = new Person("artem", "konovalov", 10);
+        personService.put(person);
+
+        int result = person.getAge();
+        result += IntStream
+                .range(0, 1_000)
+                .parallel()
+                .peek(delta -> personService.changeAge(person.getName(), delta))
+                .sum();
+
+        Person updatedPerson = personService.getByName(person.getName());
+        assertEquals(result, updatedPerson.getAge());
     }
 }
