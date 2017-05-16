@@ -11,6 +11,7 @@ import lombok.experimental.UtilityClass;
 public class HazelcastEntityNames {
 
     public static final String PERSON_MAP_NAME = "person-map";
+    public static final String FRIENDS_MULTI_MAP_NAME = "friends-map";
     public static final String ADDRESS_MAP_NAME = "address-map";
     public static final String MESSAGE_QUEUE = "message-queue";
     public static final String NEWS_TOPIC = "news-topic";

@@ -3,6 +3,7 @@ package ru.izebit.server;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.config.MapIndexConfig;
+import com.hazelcast.config.MultiMapConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 
+import static ru.izebit.common.other.HazelcastEntityNames.FRIENDS_MULTI_MAP_NAME;
 import static ru.izebit.common.other.HazelcastEntityNames.PERSON_MAP_NAME;
 
 /**
@@ -43,6 +45,17 @@ public class ApplicationLauncher {
         MapIndexConfig ageIndexConfig = new MapIndexConfig("age", true);
         personMapConfig.addMapIndexConfig(ageIndexConfig);
         config.addMapConfig(personMapConfig);
+
+
+        MultiMapConfig friendMultiMapConfig = new MultiMapConfig(FRIENDS_MULTI_MAP_NAME);
+        friendMultiMapConfig.setValueCollectionType(MultiMapConfig.ValueCollectionType.LIST);
+        config.addMultiMapConfig(friendMultiMapConfig);
+
+//        QueueConfig emailConfig = new QueueConfig(MESSAGE_QUEUE);
+//        QueueStoreConfig queueStoreConfig = new QueueStoreConfig();
+//        queueStoreConfig.setStoreImplementation(queueStore);
+//        emailConfig.setQueueStoreConfig(queueStoreConfig);
+//        config.addQueueConfig(emailConfig);
 
 
         return config;

@@ -23,8 +23,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -206,5 +207,20 @@ public class ClientTest {
 
         assertEquals(summaryCount.get(), count + count / 2);
         assertTrue(messages.isEmpty());
+    }
+
+    @Test
+    public void successful_multimap() throws Exception {
+        String firstName = "ivan";
+        String secondName = "petr";
+        String thirdName = "artem";
+
+        personService.addFriends(thirdName, emptyList());
+        personService.addFriends(firstName, asList(secondName, thirdName));
+
+
+        assertThat(personService.getFriendsFor(thirdName), empty());
+        assertThat(personService.getFriendsFor(firstName), hasSize(2));
+        assertThat(personService.getFriendsFor(firstName), contains(secondName, thirdName));
     }
 }
