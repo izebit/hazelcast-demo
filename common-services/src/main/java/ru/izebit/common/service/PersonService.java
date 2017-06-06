@@ -4,6 +4,9 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.core.MultiMap;
 import com.hazelcast.map.EntryProcessor;
+import com.hazelcast.map.listener.EntryAddedListener;
+import com.hazelcast.map.listener.EntryRemovedListener;
+import com.hazelcast.map.listener.MapListener;
 import com.hazelcast.query.Predicate;
 import com.hazelcast.query.Predicates;
 import com.hazelcast.query.SqlPredicate;
@@ -13,6 +16,7 @@ import ru.izebit.common.model.Person;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import static ru.izebit.common.other.HazelcastEntityNames.FRIENDS_MULTI_MAP_NAME;
 import static ru.izebit.common.other.HazelcastEntityNames.PERSON_MAP_NAME;
@@ -77,6 +81,19 @@ public class PersonService {
         } finally {
             personalMap.unlock(name);
         }
+    }
+
+
+    public void addCallBackForRemove(BiConsumer<String, Person> consumer, Predicate predicate) {
+        addCallBack((EntryRemovedListener<String, Person>) event -> consumer.accept(event.getKey(), event.getValue()), predicate);
+    }
+
+    public void addCallBackForAdd(BiConsumer<String, Person> consumer, Predicate predicate) {
+        addCallBack((EntryAddedListener<String, Person>) event -> consumer.accept(event.getKey(), event.getValue()), predicate);
+    }
+
+    private void addCallBack(MapListener listener, Predicate predicate) {
+        personalMap.addEntryListener(listener, predicate, true);
     }
 
     public void addFriends(String name, List<String> friendList) {

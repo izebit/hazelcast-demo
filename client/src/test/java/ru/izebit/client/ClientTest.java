@@ -1,5 +1,6 @@
 package ru.izebit.client;
 
+import com.hazelcast.query.Predicates;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -222,5 +223,30 @@ public class ClientTest {
         assertThat(personService.getFriendsFor(thirdName), empty());
         assertThat(personService.getFriendsFor(firstName), hasSize(2));
         assertThat(personService.getFriendsFor(firstName), contains(secondName, thirdName));
+    }
+
+    @Test
+    public void successful_add_listener_with_predicate() throws Exception {
+        AtomicInteger counter = new AtomicInteger();
+
+        personService.addCallBackForAdd(
+                (key, person) -> counter.incrementAndGet(),
+                Predicates.equal("name", "artem"));
+
+
+        personService.put(new Person("artem", "izebit", 26));
+        personService.put(new Person("john", "noname", 35));
+
+        TimeUnit.SECONDS.sleep(1);
+        assertThat(counter.get(), is(1));
+
+        counter.set(0);
+        personService.addCallBackForRemove(
+                (key, person) -> counter.incrementAndGet(),
+                Predicates.equal("name", "artem"));
+        personService.removeAll();
+
+        TimeUnit.SECONDS.sleep(1);
+        assertThat(counter.get(), is(0));
     }
 }
