@@ -8,13 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Timed;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import ru.izebit.common.model.Address;
-import ru.izebit.common.model.Message;
-import ru.izebit.common.model.Overview;
-import ru.izebit.common.model.Person;
+import ru.izebit.common.model.*;
 import ru.izebit.common.processors.OverviewEntryProcessor;
 import ru.izebit.common.processors.PersonAgeEntryProcessor;
 import ru.izebit.common.service.AddressService;
+import ru.izebit.common.service.FooService;
 import ru.izebit.common.service.MessageService;
 import ru.izebit.common.service.PersonService;
 
@@ -46,6 +44,8 @@ public class ClientTest {
     private AddressService addressService;
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private FooService fooService;
 
     @Before
     public void tearDown() {
@@ -248,5 +248,22 @@ public class ClientTest {
 
         TimeUnit.SECONDS.sleep(1);
         assertThat(counter.get(), is(0));
+    }
+
+
+    @Test
+    public void test() throws Exception {
+        fooService.removeAll();
+
+        IntStream.range(0, 10)
+                .mapToObj(number -> {
+                    Foo obj = new Foo();
+                    obj.setFoo(number + "");
+                    return obj;
+                })
+                .forEach(fooService::save);
+
+
+        fooService.getAll().forEach(System.out::println);
     }
 }

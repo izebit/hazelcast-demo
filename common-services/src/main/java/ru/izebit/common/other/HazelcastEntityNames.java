@@ -15,4 +15,5 @@ public class HazelcastEntityNames {
     public static final String ADDRESS_MAP_NAME = "address-map";
     public static final String MESSAGE_QUEUE = "message-queue";
     public static final String NEWS_TOPIC = "news-topic";
+    public static final String FOO_MAP_NAME = "foo-map";
 }
