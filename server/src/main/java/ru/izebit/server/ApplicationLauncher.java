@@ -6,7 +6,9 @@ import com.hazelcast.config.MapIndexConfig;
 import com.hazelcast.config.MultiMapConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -21,6 +23,9 @@ import static ru.izebit.common.other.HazelcastEntityNames.PERSON_MAP_NAME;
  */
 @SpringBootApplication
 @Configuration
+@EnableAutoConfiguration(
+        exclude = HazelcastAutoConfiguration.class
+)
 public class ApplicationLauncher {
     public static void main(String[] args) {
         SpringApplication.run(ApplicationLauncher.class, args);
@@ -30,7 +35,7 @@ public class ApplicationLauncher {
     @Bean
     @Lazy(false)
     public HazelcastCluster hazelcastCluster(@Autowired Config config) {
-        int nodeCount = Integer.getInteger("hazelcast.node.count", 4);
+        int nodeCount = Integer.getInteger("hazelcast.node.count", 1);
 
         return new HazelcastCluster(nodeCount, config);
     }

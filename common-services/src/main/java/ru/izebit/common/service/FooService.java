@@ -17,7 +17,7 @@ import static ru.izebit.common.other.HazelcastEntityNames.FOO_MAP_NAME;
  */
 @Service
 public class FooService {
-    private final IMap<String, Foo> map;
+    private final IMap<Long, Foo> map;
 
     public FooService(@Autowired HazelcastInstance instance) {
         this.map = instance.getMap(FOO_MAP_NAME);
@@ -25,10 +25,10 @@ public class FooService {
 
 
     public void save(Foo obj) {
-        map.put(obj.getFoo(), obj);
+        map.put(obj.getId(), obj);
     }
 
-    public Foo get(String key) {
+    public Foo get(long key) {
         return map.get(key);
     }
 

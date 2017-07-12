@@ -6,6 +6,7 @@ import com.hazelcast.nio.serialization.PortableWriter;
 import lombok.Data;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * @author <a href="mailto:a.konovalov@fasten.com">Artem Konovalov</a> <br/>
@@ -13,10 +14,10 @@ import java.io.IOException;
  * @since 1.0
  */
 @Data
-public class Foo implements Portable {
+public class Foo implements Portable, Comparable<Foo> {
     public static final int ID = 1;
 
-    private String foo;
+    private long id;
     private String bar;
 
 
@@ -32,13 +33,34 @@ public class Foo implements Portable {
 
     @Override
     public void writePortable(PortableWriter writer) throws IOException {
-        writer.writeUTF("foo", foo);
+        writer.writeLong("id", id);
         writer.writeUTF("bar", bar);
     }
 
     @Override
     public void readPortable(PortableReader reader) throws IOException {
-        foo = reader.readUTF("foo");
+        id = reader.readLong("id");
         bar = reader.readUTF("bar");
+    }
+
+
+    @Override
+    public int compareTo(Foo o) {
+        return Long.compare(this.id, o.id);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof Foo)) return false;
+
+        Foo foo = (Foo) o;
+        return Objects.equals(foo.bar, this.bar) &&
+                Objects.equals(foo.id, this.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, bar);
     }
 }
