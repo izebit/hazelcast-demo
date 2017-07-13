@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import ru.izebit.common.portable_factories.MyPortableFactory;
 
 /**
  * @author Artem Konovalov
@@ -34,10 +33,7 @@ public class ApplicationLauncher {
     public ClientConfig clientConfig() {
         ClientConfig config = new ClientConfig();
         config
-                .getSerializationConfig()
-                .setPortableVersion(3)
-                .addPortableFactory(1, new MyPortableFactory());
-
+                .getSerializationConfig();
         return config;
     }
 }
