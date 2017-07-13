@@ -53,7 +53,7 @@ public class SerializationTest {
 
         ClassLoader thirdClassLoader = DynamicUtils.getClassLoader(SourceCode.CLASS_NAME, SourceCode.THIRD_CLASS);
         Class<?> thirdClass = thirdClassLoader.loadClass(SourceCode.CLASS_NAME);
-        Object obj4 = getInstanceWithPrimitive(System.currentTimeMillis(), "fourth value", 0, thirdClass);
+        Object obj4 = getInstanceWithPrimitive(System.currentTimeMillis(), "fourth value", 42, thirdClass);
         FooService thirdService = new FooService(getHazelcastClient(2, getPortableFactory(thirdClassLoader, SourceCode.CLASS_NAME)));
         thirdService.save(getIdFrom(obj4), obj4);
 
@@ -74,14 +74,10 @@ public class SerializationTest {
         assertObjectEquals(obj1, thirdService.get(getIdFrom(obj1)));
 
 
-        for (FooService service : Arrays.asList(firstService, secondService, thirdService)) {
+        for (Object obj : Arrays.asList(obj1, obj2, obj3, obj4)) {
             System.out.println("--------------");
-            for (Object obj : Arrays.asList(obj1, obj2, obj3, obj4))
-                try {
-                    System.out.println(getStringFrom(service.get(getIdFrom(obj))));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            for (FooService service : Arrays.asList(firstService, secondService, thirdService))
+                System.out.println(getStringFrom(service.get(getIdFrom(obj))));
         }
     }
 
